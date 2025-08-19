@@ -1,0 +1,73 @@
+  <body>
+  
+    <h1>Event Registration</h1>
+    <form>
+      
+      <!-- Personal Details Fieldset -->
+      <fieldset>
+        <h3>Personal Information</h3>
+        
+        <label for="Name">Full Name:</label>
+        <input type="text" id="name" name="fullname" /></br>
+</br>
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email"  /><br></br>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date"  /><br></br>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="10-digit number" required />
+      </fieldset>
+
+      <!-- Event Preferences Fieldset -->
+      <fieldset>
+        <legend>Event Preferences</legend>
+
+        <label for="eventType">Select Event Category:</label>
+        <select id="eventType" name="eventType">
+          <dropdown label="Tech Events">
+            <option>Hackathon</option>
+            <option>AI Workshop</option>
+            <option>Web Dev Bootcamp</option>
+          </dropdown>
+          <dropdown label="Cultural Events">
+            <option>Dance</option>
+            <option>Drama</option>
+            <option>Music Show</option>
+          </dropdown>
+        </select>
+
+        <label for="meal">Meal Preference:</label>
+        <input type="radio" id="veg" name="meal" value="Vegetarian" checked />
+        <label for="veg">Vegetarian</label>
+        <input type="radio" id="nonveg" name="meal" value="Non-Vegetarian" />
+        <label for="nonveg">Non-Vegetarian</label>
+      </fieldset>
+
+     
+      <fieldset>
+        <legend>Additional Information</legend>
+
+        <label for="experience">Tell us why you want to attend:</label>
+        <textarea id="experience" name="experience" rows="4" placeholder="Your motivation..."></textarea>
+
+        <label for="file">Upload Your Resume (optional):</label>
+        <input type="file" id="file" name="resume" />
+
+        <label for="terms">
+          <input type="checkbox" id="terms" required />
+          I agree to the terms and conditions
+        </label>
+      </fieldset>
+
+      <!-- Buttons -->
+      <div class="buttons">
+        <button type="reset">Reset</button>
+        <button type="submit">Register</button>
+      </div>
+
+    </form>
+  </div>
+</body>
+</html>
