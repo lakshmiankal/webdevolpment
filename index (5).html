@@ -1,0 +1,411 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAKSHMI.A - Portfolio</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --font-family: 'Arial', sans-serif;
+        }
+
+        /* Basic Styling */
+        body {
+            font-family: var(--font-family);
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header, main, footer {
+            padding: 20px;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin: 0; /* Remove default margins for tighter spacing */
+        }
+
+        header h2 {
+            margin-bottom: 0; /* Ensure no space below Web Developer & Designer */
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Navigation with Flexbox */
+        nav {
+            margin-top: 5px; /* Minimal spacing between title and nav */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: flex-start; /* Align navigation to the left */
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* About Section with Flexbox */
+        .about-flex {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .about-flex {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Skills Section with Flexbox Grid */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .skill-card {
+            flex: 1 1 300px;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .skill-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        /* Form Styling */
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--secondary-color);
+        }
+
+        fieldset {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        legend {
+            padding: 0 10px;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LAKSHMI.A</h1>
+        <h2>Web Developer & Designer</h2>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h2>Welcome to my portfolio!</h2>
+        </section>
+
+        <section id="about">
+            <h2>About Me</h2>
+            <div class="about-flex">
+                <div class="about-text">
+                    <p>I am LAKSHMI.A dreaming to become a web developer present I am a 3rd student in saveetha school of engineering,chennai.And a intern in swatrix innovations</p>
+                    <p>My journey started with learning HTML and CSS, and I've since expanded to JavaScript frameworks and backend technologies.</p>
+                    <p>When not coding, I enjoy hiking and photography.</p>
+                    <p>I strive to deliver high-quality work that meets client needs.</p>
+                    <a href="#">Download Resume</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3>Technical Skills</h3>
+                    <ul>
+                        <li>HTML</li>
+                        <li>CSS</li>
+                        <li>JavaScript</li>
+                        <li>React</li>
+                        <li>Node.js</li>
+                    </ul>
+                </div>
+                <div class="skill-card">
+                    <h3>Development Process</h3>
+                    <ul>
+                        <li>Requirement Gathering</li>
+                        <li>Design</li>
+                        <li>Development</li>
+                        <li>Testing</li>
+                        <li>Deployment</li>
+                    </ul>
+                </div>
+                <div class="skill-card">
+                    <h3>Nested Skills</h3>
+                    <ul>
+                        <li>Frontend
+                            <ul>
+                                <li>HTML/CSS</li>
+                                <li>JavaScript</li>
+                                <li>Frameworks (React, Vue)</li>
+                            </ul>
+                        </li>
+                        <li>Backend
+                            <ul>
+                                <li>Node.js</li>
+                                <li>Express</li>
+                                <li>Databases (MongoDB, SQL)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <h3>My Projects</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Technology Used</th>
+                        <th>Completion Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ENHANCED FACE RECOGNITION UNDER OCCLUSIONS USING ARCFACE AND LBPH WITH ATTENTION MECHANISMS</td>
+                        <td>machine learning and artifical intelligence</td>
+                        <td>2025-06-20</td>
+                        <td>in progress</td>
+                    </tr>
+                    <tr>
+                        <td>wireless wifi connection using cisco</td>
+                        <td>NetworkingS</td>
+                        <td>2024-08-27</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>Algorithm complexity analayzer</td>
+                        <td>theory of computions</td>
+                        <td>2024-01-10</td>
+                        <td>Completed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Project Showcase</h3>
+            <div>
+                <video controls>
+ Fifteen                    <source src="video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div>
+                <audio controls>
+                    <source src="audio.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Me</h2>
+            <form>
+                <fieldset>
+                    <legend>Contact Information</legend>
+                    <label for="full-name">Full Name:</label>
+                    <input type="text" id="full-name" name="full-name">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone">
+                </fieldset>
+                <fieldset>
+                    <legend>Project Details</legend>
+                    <label for="project-type">Project Type:</label>
+                    <select id="project-type" name="project-type">
+                        <option value="web-design">Web Design</option>
+                        <option value="web-development">Web Development</option>
+                        <option value="seo">SEO</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <label>Budget Range:</label>
+                    <input type="radio" id="budget-500-1000" name="budget" value="500-1000">
+                    <label for="budget-500-1000">$500-1000</label>
+                    <input type="radio" id="budget-1000-5000" name="budget" value="1000-5000">
+                    <label for="budget-1000-5000">$1000-5000</label>
+                    <input type="radio" id="budget-5000-plus" name="budget" value="5000+">
+                    <label for="budget-5000-plus">$5000+</label>
+                    <label>Services Needed:</label>
+                    <input type="checkbox" id="service-design" name="services" value="design">
+                    <label for="service-design">Design</label>
+                    <input type="checkbox" id="service-development" name="services" value="development">
+                    <label for="service-development">Development</label>
+                    <input type="checkbox" id="service-maintenance" name="services" value="maintenance">
+                    <label for="service-maintenance">Maintenance</label>
+                    <label for="project-description">Project Description:</label>
+                    <textarea id="project-description" name="project-description"></textarea>
+                    <label for="timeline">Project Timeline (months):</label>
+                    <input type="number" id="timeline" name="timeline">
+                    <label for="start-date">Preferred Start Date:</label>
+                    <input type="date" id="start-date" name="start-date">
+                </fieldset>
+                <button type="submit">Submit</button>
+                <button type="reset">Reset</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 LAKSHMI.A. All rights reserved.</p>
+    </footer>
+</body>
+</html>
